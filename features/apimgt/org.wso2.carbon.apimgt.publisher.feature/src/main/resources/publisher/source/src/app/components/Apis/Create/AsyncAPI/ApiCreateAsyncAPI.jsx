@@ -38,6 +38,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 import ProvideAsyncAPI from './Steps/ProvideAsyncAPI';
 
 /**
@@ -54,6 +55,8 @@ export default function ApiCreateAsyncAPI(props) {
     // eslint-disable-next-line no-use-before-define
     const classes = useStyles();
     const [hideEndpoint, setHideEndpoint] = useState(true);
+    const [checkbox, setCheckbox] = useState(false);
+    const [hideProtocol, setHideProtocol] = useState(false);
 
     /**
      *
@@ -148,6 +151,18 @@ export default function ApiCreateAsyncAPI(props) {
 
     /**
      *
+     *
+     * @param {*} event
+     */
+    function handleOnChangeForCheckBox(event) {
+        setCheckbox(event.target.checked);
+        setHideProtocol(event.target.checked);
+        // const { name: action, checked } = event.target;
+        // inputsDispatcher({ action, checked });
+    }
+
+    /**
+     *
      * Set the validity of the API Inputs form
      * @param {*} isValidForm
      * @param {*} validationState
@@ -176,6 +191,9 @@ export default function ApiCreateAsyncAPI(props) {
             context,
             policies,
             type: protocolKeys[protocol],
+            advertiseInfo: {
+                advertised: checkbox,
+            },
         };
         if (endpoint) {
             additionalProperties.endpointConfig = {
@@ -271,43 +289,58 @@ export default function ApiCreateAsyncAPI(props) {
                             endpointPlaceholderText='Streaming Provider'
                             appendChildrenBeforeEndpoint
                         >
-                            <TextField
-                                fullWidth
-                                select
-                                label={(
-                                    <>
-                                        <FormattedMessage
-                                            id='Apis.Create.asyncAPI.Components.SelectPolicies.business.plans'
-                                            defaultMessage='Protocol'
-                                        />
-                                        <sup className={classes.mandatoryStar}>*</sup>
-                                    </>
+                            <FormControlLabel
+                                control={(
+                                    <Checkbox
+                                        onChange={handleOnChangeForCheckBox}
+                                        color='primary'
+                                        name='isAdvertiseOnly'
+                                    />
                                 )}
-                                value={apiInputs.protocol}
-                                name='protocol'
-                                SelectProps={{
-                                    multiple: false,
-                                    renderValue: (selected) => (selected),
-                                }}
-                                margin='normal'
-                                variant='outlined'
-                                InputProps={{
-                                    id: 'itest-id-apipolicies-input',
-                                }}
-                                onChange={handleOnChangeForProtocol}
-                            >
-                                {protocols.map((protocol) => (
-                                    <MenuItem
-                                        dense
-                                        disableGutters={false}
-                                        id={protocol.name}
-                                        key={protocol.name}
-                                        value={protocol.displayName}
-                                    >
-                                        <ListItemText primary={protocol.displayName} secondary={protocol.description} />
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                                label='Import as an advertise only API'
+                            />
+                            {!hideProtocol && (
+                                <TextField
+                                    fullWidth
+                                    select
+                                    label={(
+                                        <>
+                                            <FormattedMessage
+                                                id='Apis.Create.asyncAPI.Components.SelectPolicies.business.plans'
+                                                defaultMessage='Protocol'
+                                            />
+                                            <sup className={classes.mandatoryStar}>*</sup>
+                                        </>
+                                    )}
+                                    value={apiInputs.protocol}
+                                    name='protocol'
+                                    SelectProps={{
+                                        multiple: false,
+                                        renderValue: (selected) => (selected),
+                                    }}
+                                    margin='normal'
+                                    variant='outlined'
+                                    InputProps={{
+                                        id: 'itest-id-apipolicies-input',
+                                    }}
+                                    onChange={handleOnChangeForProtocol}
+                                >
+                                    {protocols.map((protocol) => (
+                                        <MenuItem
+                                            dense
+                                            disableGutters={false}
+                                            id={protocol.name}
+                                            key={protocol.name}
+                                            value={protocol.displayName}
+                                        >
+                                            <ListItemText
+                                                primary={protocol.displayName}
+                                                secondary={protocol.description}
+                                            />
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            )}
                         </DefaultAPIForm>
                     )}
                 </Grid>
