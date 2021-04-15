@@ -60,9 +60,9 @@ function MetaData(props) {
                     <Grid item xs={12} md={6} lg={8}>
                         <Typography component='p' variant='body1'>
                             {api.description
-                            && (
-                                <ReactMarkdown source={capitalizeFirstLetter(api.description)} />
-                            )}
+                                && (
+                                    <ReactMarkdown source={capitalizeFirstLetter(api.description)} />
+                                )}
                         </Typography>
                         <Typography component='p' variant='body1' className={parentClasses.notConfigured}>
                             {!api.description
@@ -128,26 +128,27 @@ function MetaData(props) {
                         </>
                     )}
                     {/* Type */}
-                    {api.apiType === API.CONSTS.APIProduct ? null : (
-                        <>
-                            <Grid item xs={12} md={6} lg={4}>
-                                <>
-                                    <Typography
-                                        component='p'
-                                        variant='subtitle2'
-                                        className={parentClasses.subtitle}
-                                    >
-                                        <FormattedMessage
-                                            id='Apis.Details.NewOverview.MetaData.type:'
-                                            defaultMessage='Type:'
-                                        />
-                                    </Typography>
-                                </>
-                            </Grid>
-                            <Grid item xs={12} md={6} lg={8}>
-                                <Typography component='p' variant='body1'>
-                                    {api.type && <>{api.type === 'WS' ? 'WebSocket' : api.type}</>}
-                                    {!api.type
+                    {api.apiType === API.CONSTS.APIProduct ? null : ((
+                        (!api.advertiseInfo.advertised) && (
+                            <>
+                                <Grid item xs={12} md={6} lg={4}>
+                                    <>
+                                        <Typography
+                                            component='p'
+                                            variant='subtitle2'
+                                            className={parentClasses.subtitle}
+                                        >
+                                            <FormattedMessage
+                                                id='Apis.Details.NewOverview.MetaData.type:'
+                                                defaultMessage='Type:'
+                                            />
+                                        </Typography>
+                                    </>
+                                </Grid>
+                                <Grid item xs={12} md={6} lg={8}>
+                                    <Typography component='p' variant='body1'>
+                                        {api.type && <>{api.type === 'WS' ? 'WebSocket' : api.type}</>}
+                                        {!api.type
                                         && (
                                             <>
                                                 <Typography
@@ -162,10 +163,11 @@ function MetaData(props) {
                                                 </Typography>
                                             </>
                                         )}
-                                </Typography>
-                            </Grid>
-                        </>
-                    )}
+                                    </Typography>
+                                </Grid>
+                            </>
+                        )
+                    ))}
                     <Grid item xs={12} md={6} lg={4}>
                         {/* Created Time */}
                         <Typography component='p' variant='subtitle2' className={parentClasses.subtitle}>
@@ -178,21 +180,21 @@ function MetaData(props) {
                     <Grid item xs={12} md={6} lg={8}>
                         <Typography component='p' variant='body1'>
                             {api.createdTime
-                            && (
-                                <>
-                                    <Tooltip
-                                        title={moment(api.createdTime).calendar()}
-                                        aria-label='add'
-                                        interactive
-                                        placement='top-start'
-                                        tabIndex='-1'
-                                    >
-                                        <Typography variant='body1' display='block'>
-                                            {capitalizeFirstLetter(moment(api.createdTime).fromNow())}
-                                        </Typography>
-                                    </Tooltip>
-                                </>
-                            )}
+                                && (
+                                    <>
+                                        <Tooltip
+                                            title={moment(api.createdTime).calendar()}
+                                            aria-label='add'
+                                            interactive
+                                            placement='top-start'
+                                            tabIndex='-1'
+                                        >
+                                            <Typography variant='body1' display='block'>
+                                                {capitalizeFirstLetter(moment(api.createdTime).fromNow())}
+                                            </Typography>
+                                        </Tooltip>
+                                    </>
+                                )}
                             {!api.createdTime
                                 && (
                                     <>
@@ -222,21 +224,21 @@ function MetaData(props) {
                     <Grid item xs={12} md={6} lg={8}>
                         <Typography component='p' variant='body1'>
                             {api.lastUpdatedTime
-                            && (
-                                <>
-                                    <Tooltip
-                                        title={moment(api.lastUpdatedTime).calendar()}
-                                        aria-label='add'
-                                        interactive
-                                        placement='top-start'
-                                        tabIndex='-1'
-                                    >
-                                        <Typography variant='body1' display='block'>
-                                            {capitalizeFirstLetter(moment(api.lastUpdatedTime).fromNow())}
-                                        </Typography>
-                                    </Tooltip>
-                                </>
-                            )}
+                                && (
+                                    <>
+                                        <Tooltip
+                                            title={moment(api.lastUpdatedTime).calendar()}
+                                            aria-label='add'
+                                            interactive
+                                            placement='top-start'
+                                            tabIndex='-1'
+                                        >
+                                            <Typography variant='body1' display='block'>
+                                                {capitalizeFirstLetter(moment(api.lastUpdatedTime).fromNow())}
+                                            </Typography>
+                                        </Tooltip>
+                                    </>
+                                )}
                             {!api.lastUpdatedTime
                                 && (
                                     <>

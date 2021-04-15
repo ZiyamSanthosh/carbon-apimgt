@@ -40,6 +40,7 @@ import InsertDriveFile from '@material-ui/icons/InsertDriveFile';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import Banner from 'AppComponents/Shared/Banner';
 import APIValidation from 'AppData/APIValidation';
@@ -60,7 +61,9 @@ const useStyles = makeStyles((theme) => ({
  * @returns {React.Component} @inheritdoc
  */
 export default function ProvideAsyncAPI(props) {
-    const { apiInputs, inputsDispatcher, onValidate } = props;
+    const {
+        apiInputs, inputsDispatcher, onValidate, setAdvertiseOnly,
+    } = props;
     const isFileInput = apiInputs.inputType === 'file';
     const { inputType, inputValue } = apiInputs;
     const classes = useStyles();
@@ -218,19 +221,19 @@ export default function ProvideAsyncAPI(props) {
                     </FormControl>
                 </Grid>
                 {isValid.file
-                && (
-                    <Grid item md={11}>
-                        <Banner
-                            onClose={() => setValidity({ file: null })}
-                            disableActions
-                            dense
-                            paperProps={{ elevation: 1 }}
-                            type='error'
-                            message={isValid.file.message}
-                            errors={validationErrors}
-                        />
-                    </Grid>
-                )}
+                    && (
+                        <Grid item md={11}>
+                            <Banner
+                                onClose={() => setValidity({ file: null })}
+                                disableActions
+                                dense
+                                paperProps={{ elevation: 1 }}
+                                type='error'
+                                message={isValid.file.message}
+                                errors={validationErrors}
+                            />
+                        </Grid>
+                    )}
                 <Grid item xs={10} md={11}>
                     {isFileInput ? (
                         <>
@@ -272,7 +275,7 @@ export default function ProvideAsyncAPI(props) {
                                             <FormattedMessage
                                                 id='Apis.Create.AsyncAPI.Steps.ProvideAsyncAPI.Input.file.dropzone'
                                                 defaultMessage={'Drag & Drop AsyncAPI File '
-                                                + 'here {break} or {break} Browse files'}
+                                                    + 'here {break} or {break} Browse files'}
                                                 values={{ break: <br /> }}
                                             />,
                                             <Button
@@ -314,6 +317,15 @@ export default function ProvideAsyncAPI(props) {
                             error={isInvalidURL}
                         />
                     )}
+                    <FormControlLabel
+                        control={(
+                            <Checkbox
+                                onChange={setAdvertiseOnly}
+                                color='primary'
+                            />
+                        )}
+                        label='Import as an Advertise Only API'
+                    />
                 </Grid>
                 <Grid item xs={2} md={5} />
             </Grid>

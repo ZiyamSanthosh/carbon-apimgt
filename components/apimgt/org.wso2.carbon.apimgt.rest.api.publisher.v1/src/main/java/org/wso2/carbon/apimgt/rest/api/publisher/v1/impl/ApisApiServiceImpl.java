@@ -4893,6 +4893,9 @@ public class ApisApiServiceImpl implements ApisApiService {
             if (isServiceAPI) {
                 apiDTOFromProperties.setType(PublisherCommonUtils.getAPIType(service.getDefinitionType(), protocol));
             }
+            if (APIDTO.TypeEnum.WEBSUB.equals(apiDTOFromProperties.getType()) && apiDTOFromProperties.getAdvertiseInfo().isAdvertised()) {
+                apiDTOFromProperties.getPolicies().add("AsyncUnlimited");
+            }
             API apiToAdd = PublisherCommonUtils.prepareToCreateAPIByDTO(apiDTOFromProperties, apiProvider,
                     RestApiCommonUtil.getLoggedInUsername());
             if (isServiceAPI) {
