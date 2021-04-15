@@ -46,6 +46,7 @@ import org.wso2.carbon.apimgt.impl.utils.APIUtil;
 import org.wso2.carbon.apimgt.impl.utils.VHostUtils;
 import org.wso2.carbon.apimgt.rest.api.common.RestApiCommonUtil;
 import org.wso2.carbon.apimgt.rest.api.common.RestApiConstants;
+import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIAdditionalPropertiesDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIBusinessInformationDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIDefaultVersionURLsDTO;
@@ -92,7 +93,6 @@ public class APIMappingUtil {
         dto.setContext(model.getContext());
         dto.setDescription(model.getDescription());
         dto.setIsDefaultVersion(model.isPublishedDefaultVersion());
-        dto.setIsAWSAPI(model.isAWSAPI());
         dto.setLifeCycleStatus(model.getStatus());
         dto.setType(model.getType());
         dto.setAvgRating(String.valueOf(model.getRating()));
@@ -219,12 +219,19 @@ public class APIMappingUtil {
 
         if (model.getAdditionalProperties() != null) {
             JSONObject additionalProperties = model.getAdditionalProperties();
-            Map<String, String> additionalPropertiesMap = new HashMap<>();
+            List<APIAdditionalPropertiesDTO> additionalPropertiesList = new ArrayList<>();
             for (Object propertyKey : additionalProperties.keySet()) {
+                APIAdditionalPropertiesDTO additionalPropertiesDTO = new APIAdditionalPropertiesDTO();
                 String key = (String) propertyKey;
-                additionalPropertiesMap.put(key, (String) additionalProperties.get(key));
+                int index = key.lastIndexOf(APIConstants.API_RELATED_CUSTOM_PROPERTIES_SURFIX);
+                additionalPropertiesDTO.setValue((String) additionalProperties.get(key));
+                if (index > 0) {
+                    additionalPropertiesDTO.setName(key.substring(0, index));
+                    additionalPropertiesDTO.setDisplay(true);
+                    additionalPropertiesList.add(additionalPropertiesDTO);
+                }
             }
-            dto.setAdditionalProperties(additionalPropertiesMap);
+            dto.setAdditionalProperties(additionalPropertiesList);
         }
 
         dto.setWsdlUri(model.getWsdlUrl());
@@ -399,12 +406,19 @@ public class APIMappingUtil {
 
         if (model.getAdditionalProperties() != null) {
             JSONObject additionalProperties = model.getAdditionalProperties();
-            Map<String, String> additionalPropertiesMap = new HashMap<>();
+            List<APIAdditionalPropertiesDTO> additionalPropertiesList = new ArrayList<>();
             for (Object propertyKey : additionalProperties.keySet()) {
+                APIAdditionalPropertiesDTO additionalPropertiesDTO = new APIAdditionalPropertiesDTO();
                 String key = (String) propertyKey;
-                additionalPropertiesMap.put(key, (String) additionalProperties.get(key));
+                int index = key.lastIndexOf(APIConstants.API_RELATED_CUSTOM_PROPERTIES_SURFIX);
+                additionalPropertiesDTO.setValue((String) additionalProperties.get(key));
+                if (index > 0) {
+                    additionalPropertiesDTO.setName(key.substring(0, index));
+                    additionalPropertiesDTO.setDisplay(true);
+                    additionalPropertiesList.add(additionalPropertiesDTO);
+                }
             }
-            dto.setAdditionalProperties(additionalPropertiesMap);
+            dto.setAdditionalProperties(additionalPropertiesList);
         }
 
         if (model.getEnvironments() != null) {
@@ -439,7 +453,7 @@ public class APIMappingUtil {
             apidto = fromAPItoDTO(model.getApi(), tenantDomain);
         }
 
-        if (!apidto.isIsAWSAPI()) {
+        if (!AdvertiseInfoDTO.VendorEnum.AWS.toString().equals(apidto.getAdvertiseInfo().getVendor().value())) {
             apidto.setEndpointURLs(fromAPIRevisionListToEndpointsList(apidto, tenantDomain));
         } else {
             //getting the server url from the swagger to be displayed as the endpoint url in the dev portal for aws apis
@@ -933,6 +947,9 @@ public class APIMappingUtil {
         advertiseInfoDTO.setAdvertised(api.isAdvertiseOnly());
         advertiseInfoDTO.setOriginalDevPortalUrl(api.getRedirectURL());
         advertiseInfoDTO.setApiOwner(api.getApiOwner());
+        if (api.getAdvertiseOnlyAPIVendor() != null) {
+            advertiseInfoDTO.setVendor(AdvertiseInfoDTO.VendorEnum.valueOf(api.getAdvertiseOnlyAPIVendor()));
+        }
         return advertiseInfoDTO;
     }
 

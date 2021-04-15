@@ -148,7 +148,6 @@ function Overview() {
         ? api.endpointURLs[0]
         : null);
     const classes = useStyles();
-
     // Truncating the description
     let descriptionIsBig = false;
     let smallDescription = '';
@@ -681,17 +680,19 @@ function Overview() {
                                 </Typography>
                             </Box>
                             <Box mt={1} ml={1}>
-                                {Object.entries(api.additionalProperties).map(([key, value]) => {
-                                    return (
-                                        <Typography variant='body2'>
-                                            {key}
-                                            {' '}
-                                            :
-                                            {' '}
-                                            {value}
-                                        </Typography>
-                                    );
-                                })}
+                                {api.additionalProperties
+                                    .filter(({ display }) => display)
+                                    .map(({ name, value }) => {
+                                        return (
+                                            <Typography variant='body2'>
+                                                {name}
+                                                {' '}
+                                                :
+                                                {' '}
+                                                {value}
+                                            </Typography>
+                                        );
+                                    })}
                             </Box>
                         </>
                     )}

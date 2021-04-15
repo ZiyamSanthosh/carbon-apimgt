@@ -39,6 +39,7 @@ import org.wso2.carbon.apimgt.api.dto.UserApplicationAPIUsage;
 import org.wso2.carbon.apimgt.api.model.API;
 import org.wso2.carbon.apimgt.api.model.APICategory;
 import org.wso2.carbon.apimgt.api.model.APIIdentifier;
+import org.wso2.carbon.apimgt.api.model.APIInfo;
 import org.wso2.carbon.apimgt.api.model.APIKey;
 import org.wso2.carbon.apimgt.api.model.APIProduct;
 import org.wso2.carbon.apimgt.api.model.APIProductIdentifier;
@@ -2171,6 +2172,30 @@ public class ApiMgtDAO {
         } finally {
             APIMgtDBUtil.closeAllConnections(ps, conn, resultSet);
             APIMgtDBUtil.closeAllConnections(insertOrUpdatePS, null, null);
+        }
+    }
+
+    public void deleteThrottlingPermissions(String tierName, int tenantId) throws APIManagementException {
+        int tierPermissionId = -1;
+        try (Connection connection = APIMgtDBUtil.getConnection();
+             PreparedStatement ps = connection.prepareStatement(SQLConstants.GET_THROTTLE_TIER_PERMISSION_ID_SQL)) {
+            ps.setString(1, tierName);
+            ps.setInt(2, tenantId);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    tierPermissionId = resultSet.getInt("THROTTLE_TIER_PERMISSIONS_ID");
+                }
+            }
+            if (tierPermissionId != -1) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants
+                        .DELETE_THROTTLE_TIER_PERMISSION_SQL)) {
+                    preparedStatement.setInt(1, tierPermissionId);
+                    preparedStatement.setInt(2, tenantId);
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            handleException("Error in deleting tier permissions: " + e.getMessage(), e);
         }
     }
 
@@ -9070,20 +9095,37 @@ public class ApiMgtDAO {
         }
     }
 
-    public SubscribedApiDTO getAPIInfoByUUID(String apiId) throws APIManagementException {
-
+    /**
+     * Retrieve basic information about the given API by the UUID quering only from AM_API
+     *
+     * @param apiId UUID of the API
+     * @return basic information about the API
+     * @throws APIManagementException error while getting the API information from AM_API
+     */
+    public APIInfo getAPIInfoByUUID(String apiId) throws APIManagementException {
         try (Connection connection = APIMgtDBUtil.getConnection()) {
-            String sql = "SELECT API_PROVIDER,API_NAME,API_VERSION,CONTEXT FROM AM_API WHERE API_UUID = ?";
+            String sql = SQLConstants.RETRIEVE_API_INFO_FROM_UUID;
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, apiId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        SubscribedApiDTO subscribedApiDTO = new SubscribedApiDTO();
-                        subscribedApiDTO.setName(resultSet.getString("API_NAME"));
-                        subscribedApiDTO.setVersion(resultSet.getString("API_VERSION"));
-                        subscribedApiDTO.setPublisher(resultSet.getString("API_PROVIDER"));
-                        subscribedApiDTO.setContext(resultSet.getString("CONTEXT"));
-                        return subscribedApiDTO;
+                        APIInfo.Builder apiInfoBuilder = new APIInfo.Builder();
+                        return apiInfoBuilder
+                                .id(resultSet.getString("API_UUID"))
+                                .name(resultSet.getString("API_NAME"))
+                                .version(resultSet.getString("API_VERSION"))
+                                .provider(resultSet.getString("API_PROVIDER"))
+                                .context(resultSet.getString("CONTEXT"))
+                                .contextTemplate(resultSet.getString("CONTEXT_TEMPLATE"))
+                                .apiTier(resultSet.getString("API_TIER"))
+                                .status(APIUtil.getApiStatus(resultSet.getString("STATUS")))
+                                .apiType(resultSet.getString("API_TYPE"))
+                                .createdBy(resultSet.getString("CREATED_BY"))
+                                .createdTime(resultSet.getString("CREATED_TIME"))
+                                .updatedBy(resultSet.getString("UPDATED_BY"))
+                                .updatedTime(resultSet.getString("UPDATED_TIME"))
+                                .revisionsCreated(resultSet.getInt("REVISIONS_CREATED"))
+                                .build();
                     }
                 }
             }

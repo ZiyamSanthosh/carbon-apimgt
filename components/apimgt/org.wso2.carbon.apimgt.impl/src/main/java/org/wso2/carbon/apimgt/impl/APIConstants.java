@@ -351,6 +351,8 @@ public final class APIConstants {
     public static final String BEGIN_CERTIFICATE_STRING_SPACE = "-----BEGIN CERTIFICATE----- ";
     public static final String END_CERTIFICATE_STRING = "-----END CERTIFICATE-----";
 
+    public static final String API_RELATED_CUSTOM_PROPERTIES_SURFIX = "__display";
+
     public static final String API_OVERVIEW_RESPONSE_CACHING = "overview_responseCaching";
     public static final String API_OVERVIEW_CACHE_TIMEOUT = "overview_cacheTimeout";
 
@@ -598,6 +600,7 @@ public final class APIConstants {
     public static final String GATEWAY_INTERNAL_KEY_DATA_CACHE_NAME = "gatewayInternalKeyDataCache";
     public static final String GATEWAY_INVALID_INTERNAL_KEY_CACHE_NAME = "gatewayInvalidInternalKeyCache";
     public static final String GRANT_TYPE_PASSWORD = "password";
+    public static final String ENABLE_TENANT_BASE_SIGNING = "EnableTenantBasedSigning";
 
     public static class TokenStatus {
 
@@ -1890,6 +1893,7 @@ public final class APIConstants {
         public static final String EVALUATED_CONDITIONS = "evaluatedConditions";
         public static final String TRUE = "true";
         public static final String ADD = "add";
+        public static final String ENABLE_POLICY_DEPLOYMENT = "EnablePolicyDeployment";
     }
 
     /**
@@ -2706,6 +2710,7 @@ public final class APIConstants {
         public static final String SERVER_APIKEYSIGN_KEYSTORE_KEY_ALIAS = "Security.KeyStoreName.KeyAlias";
         public static final String SERVER_APIKEYSIGN_KEYSTORE_TYPE = "Security.KeyStoreName.Type";
         public static final String SERVER_APIKEYSIGN_PRIVATE_KEY_PASSWORD = "Security.KeyStoreName.KeyPassword";
+        public static final String KEY_STORE_EXTENSION_JKS = ".jks";
     }
 
     public static class ExtensionListenerConstants {

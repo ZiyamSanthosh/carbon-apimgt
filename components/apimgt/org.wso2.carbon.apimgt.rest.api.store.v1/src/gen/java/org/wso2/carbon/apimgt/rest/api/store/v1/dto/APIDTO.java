@@ -5,9 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIAdditionalPropertiesDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIBusinessInformationDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIEndpointURLsDTO;
 import org.wso2.carbon.apimgt.rest.api.store.v1.dto.APIMonetizationInfoDTO;
@@ -41,7 +40,6 @@ public class APIDTO   {
     private String wsdlUri = null;
     private String lifeCycleStatus = null;
     private Boolean isDefaultVersion = null;
-    private Boolean isAWSAPI = null;
     private String type = null;
     private List<String> transport = new ArrayList<String>();
     private List<APIOperationsDTO> operations = new ArrayList<APIOperationsDTO>();
@@ -50,7 +48,7 @@ public class APIDTO   {
     private List<String> tags = new ArrayList<String>();
     private List<APITiersDTO> tiers = new ArrayList<APITiersDTO>();
     private Boolean hasThumbnail = false;
-    private Map<String, String> additionalProperties = new HashMap<String, String>();
+    private List<APIAdditionalPropertiesDTO> additionalProperties = new ArrayList<APIAdditionalPropertiesDTO>();
     private APIMonetizationInfoDTO monetization = null;
     private List<APIEndpointURLsDTO> endpointURLs = new ArrayList<APIEndpointURLsDTO>();
     private APIBusinessInformationDTO businessInformation = null;
@@ -249,23 +247,6 @@ public class APIDTO   {
   }
 
   /**
-   **/
-  public APIDTO isAWSAPI(Boolean isAWSAPI) {
-    this.isAWSAPI = isAWSAPI;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "false", value = "")
-  @JsonProperty("isAWSAPI")
-  public Boolean isIsAWSAPI() {
-    return isAWSAPI;
-  }
-  public void setIsAWSAPI(Boolean isAWSAPI) {
-    this.isAWSAPI = isAWSAPI;
-  }
-
-  /**
    * This describes the transport type of the API
    **/
   public APIDTO type(String type) {
@@ -411,18 +392,19 @@ public class APIDTO   {
   /**
    * Custom(user defined) properties of API 
    **/
-  public APIDTO additionalProperties(Map<String, String> additionalProperties) {
+  public APIDTO additionalProperties(List<APIAdditionalPropertiesDTO> additionalProperties) {
     this.additionalProperties = additionalProperties;
     return this;
   }
 
   
   @ApiModelProperty(example = "{}", value = "Custom(user defined) properties of API ")
+      @Valid
   @JsonProperty("additionalProperties")
-  public Map<String, String> getAdditionalProperties() {
+  public List<APIAdditionalPropertiesDTO> getAdditionalProperties() {
     return additionalProperties;
   }
-  public void setAdditionalProperties(Map<String, String> additionalProperties) {
+  public void setAdditionalProperties(List<APIAdditionalPropertiesDTO> additionalProperties) {
     this.additionalProperties = additionalProperties;
   }
 
@@ -660,7 +642,6 @@ public class APIDTO   {
         Objects.equals(wsdlUri, API.wsdlUri) &&
         Objects.equals(lifeCycleStatus, API.lifeCycleStatus) &&
         Objects.equals(isDefaultVersion, API.isDefaultVersion) &&
-        Objects.equals(isAWSAPI, API.isAWSAPI) &&
         Objects.equals(type, API.type) &&
         Objects.equals(transport, API.transport) &&
         Objects.equals(operations, API.operations) &&
@@ -686,7 +667,7 @@ public class APIDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, context, version, provider, apiDefinition, wsdlUri, lifeCycleStatus, isDefaultVersion, isAWSAPI, type, transport, operations, authorizationHeader, securityScheme, tags, tiers, hasThumbnail, additionalProperties, monetization, endpointURLs, businessInformation, environmentList, scopes, avgRating, advertiseInfo, isSubscriptionAvailable, categories, keyManagers, createdTime, lastUpdatedTime);
+    return Objects.hash(id, name, description, context, version, provider, apiDefinition, wsdlUri, lifeCycleStatus, isDefaultVersion, type, transport, operations, authorizationHeader, securityScheme, tags, tiers, hasThumbnail, additionalProperties, monetization, endpointURLs, businessInformation, environmentList, scopes, avgRating, advertiseInfo, isSubscriptionAvailable, categories, keyManagers, createdTime, lastUpdatedTime);
   }
 
   @Override
@@ -704,7 +685,6 @@ public class APIDTO   {
     sb.append("    wsdlUri: ").append(toIndentedString(wsdlUri)).append("\n");
     sb.append("    lifeCycleStatus: ").append(toIndentedString(lifeCycleStatus)).append("\n");
     sb.append("    isDefaultVersion: ").append(toIndentedString(isDefaultVersion)).append("\n");
-    sb.append("    isAWSAPI: ").append(toIndentedString(isAWSAPI)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    transport: ").append(toIndentedString(transport)).append("\n");
     sb.append("    operations: ").append(toIndentedString(operations)).append("\n");

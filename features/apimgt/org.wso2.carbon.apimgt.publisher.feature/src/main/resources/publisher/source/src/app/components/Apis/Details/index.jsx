@@ -65,6 +65,7 @@ import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { RevisionContextProvider } from 'AppComponents/Shared/RevisionContext';
+import { PROPERTIES as UserProperties } from 'AppData/User';
 import Overview from './NewOverview/Overview';
 import DesignConfigurations from './Configuration/DesignConfigurations';
 import RuntimeConfiguration from './Configuration/RuntimeConfiguration';
@@ -197,6 +198,7 @@ const AccordionDetails = withStyles((theme) => ({
     },
 }))(MuiAccordionDetails);
 
+
 /**
  * Base component for API specific Details page,
  * What this component do is, Handle all the request coming under `/apis/:api_uuid` path, If the :api_uuid or
@@ -247,6 +249,8 @@ class Details extends Component {
             allRevisions: null,
             allEnvRevision: null,
             authorizedAPI: false,
+            portalConfigsExpanded: false,
+            apiConfigsExpanded: false,
         };
         this.setAPI = this.setAPI.bind(this);
         this.setAPIProduct = this.setAPIProduct.bind(this);
@@ -254,6 +258,7 @@ class Details extends Component {
         this.setImageUpdate = this.setImageUpdate.bind(this);
         this.getRevision = this.getRevision.bind(this);
         this.getDeployedEnv = this.getDeployedEnv.bind(this);
+        this.handleAccordionState = this.handleAccordionState.bind(this);
     }
 
     /**
@@ -265,6 +270,7 @@ class Details extends Component {
             location: { pathname },
             isAPIProduct,
         } = this.props;
+        const { user } = this.context;
         // Load API data iff request page is valid
         if (Details.isValidURL(pathname)) {
             if (isAPIProduct) {
@@ -281,6 +287,10 @@ class Details extends Component {
                     console.error('error when getting tenants ' + error);
                 });
         }
+        this.setState({
+            apiConfigsExpanded: user.getProperty(UserProperties.API_CONFIG_OPEN),
+            portalConfigsExpanded: user.getProperty(UserProperties.PORTAL_CONFIG_OPEN),
+        });
     }
 
     /**
@@ -567,6 +577,21 @@ class Details extends Component {
     }
 
     /**
+     * update ls
+     * @param {String} name event triggered
+     * @param {Boolean} isExpanded state
+     */
+    handleAccordionState(name, isExpanded) {
+        const { user } = this.context;
+        this.setState({ [name]: isExpanded });
+        if (name === 'portalConfigsExpanded') {
+            user.setProperty(UserProperties.PORTAL_CONFIG_OPEN, isExpanded);
+        } else {
+            user.setProperty(UserProperties.API_CONFIG_OPEN, isExpanded);
+        }
+    }
+
+    /**
      * This method is similar to ReactJS `setState` method, In this `updateAPI()` method, we accept partially updated
      * API object or comple API object. When updating , the provided updatedAPI object will be merged with the existing
      * API object in the state and use it as the payload in the /apis PUT operation.
@@ -683,7 +708,6 @@ class Details extends Component {
             return <Progress per={70} message='Loading API data ...' />;
         }
         const { leftMenuIconMainSize } = theme.custom;
-
         return (
             <Box display='flex' alignItems='stretch' flexDirection='row'>
                 <APIProvider
@@ -722,8 +746,11 @@ class Details extends Component {
                         </Typography>
                         <div className={classes.root}>
                             <Accordion
-                                defaultExpanded={false}
+                                id='itest-api-details-portal-config-acc'
+                                defaultExpanded={this.state.portalConfigsExpanded}
                                 elevation={0}
+                                onChange={(e, isExpanded) => this.handleAccordionState('portalConfigsExpanded',
+                                    isExpanded)}
                                 classes={{ expanded: classes.expanded }}
                             >
                                 <AccordianSummary
@@ -753,7 +780,17 @@ class Details extends Component {
                                             to={pathPrefix + 'business info'}
                                             Icon={<BusinessIcon />}
                                         />
-                                        {!api.advertiseInfo.advertised && (
+                                        {!isAPIProduct && api.advertiseInfo && !api.advertiseInfo.advertised && (
+                                            <LeftMenuItem
+                                                text={intl.formatMessage({
+                                                    id: 'Apis.Details.index.subscriptions',
+                                                    defaultMessage: 'subscriptions',
+                                                })}
+                                                to={pathPrefix + 'subscriptions'}
+                                                Icon={<SubscriptionsIcon />}
+                                            />
+                                        )}
+                                        {isAPIProduct && (
                                             <LeftMenuItem
                                                 text={intl.formatMessage({
                                                     id: 'Apis.Details.index.subscriptions',
@@ -786,8 +823,11 @@ class Details extends Component {
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion
+                                id='itest-api-details-api-config-acc'
+                                defaultExpanded={this.state.apiConfigsExpanded}
                                 elevation={0}
-                                defaultExpanded={false}
+                                onChange={(e, isExpanded) => this.handleAccordionState('apiConfigsExpanded',
+                                    isExpanded)}
                                 classes={{ expanded: classes.expanded }}
                             >
                                 <AccordianSummary
@@ -808,7 +848,8 @@ class Details extends Component {
                                 </AccordianSummary>
                                 <AccordionDetails>
                                     <div>
-                                        {!api.advertiseInfo.advertised && !api.isWebSocket() && (
+                                        {!isAPIProduct && api.advertiseInfo && !api.advertiseInfo.advertised
+                                            && !api.isWebSocket() && (
                                             <LeftMenuItem
                                                 text={intl.formatMessage({
                                                     id: 'Apis.Details.index.runtime.configs',
@@ -819,7 +860,18 @@ class Details extends Component {
                                                 Icon={<RuntimeConfigurationIcon />}
                                             />
                                         )}
-                                        {!api.advertiseInfo.advertised && api.isWebSocket() && (
+                                        {isAPIProduct && (
+                                            <LeftMenuItem
+                                                text={intl.formatMessage({
+                                                    id: 'Apis.Details.index.runtime.configs',
+                                                    defaultMessage: 'Runtime',
+                                                })}
+                                                route='runtime-configuration'
+                                                to={pathPrefix + 'runtime-configuration'}
+                                                Icon={<RuntimeConfigurationIcon />}
+                                            />
+                                        )}
+                                        {api.advertiseInfo && !api.advertiseInfo.advertised && api.isWebSocket() && (
                                             <LeftMenuItem
                                                 text={intl.formatMessage({
                                                     id: 'Apis.Details.index.runtime.configs',
@@ -830,10 +882,11 @@ class Details extends Component {
                                                 Icon={<RuntimeConfigurationIcon />}
                                             />
                                         )}
-                                        {!api.advertiseInfo.advertised
+                                        {!isAPIProduct && api.advertiseInfo && !api.advertiseInfo.advertised
                                             && this.getLeftMenuItemForResourcesByType(api.type)}
+                                        {isAPIProduct && this.getLeftMenuItemForResourcesByType(api.type)}
                                         {this.getLeftMenuItemForDefinitionByType(api.type)}
-                                        {!api.advertiseInfo.advertised && !isAPIProduct
+                                        {api.advertiseInfo && !api.advertiseInfo.advertised && !isAPIProduct
                                             && api.type !== 'WEBSUB' && (
                                             <LeftMenuItem
                                                 text={intl.formatMessage({
@@ -844,7 +897,7 @@ class Details extends Component {
                                                 Icon={<EndpointIcon />}
                                             />
                                         )}
-                                        {!api.advertiseInfo.advertised && !isAPIProduct && (
+                                        {api.advertiseInfo && !api.advertiseInfo.advertised && !isAPIProduct && (
                                             <LeftMenuItem
                                                 text={intl.formatMessage({
                                                     id: 'Apis.Details.index.left.menu.scope',
@@ -867,7 +920,8 @@ class Details extends Component {
 
                                         {!api.isWebSocket() && !isRestricted(['apim:api_publish'], api) && (
                                             <>
-                                                {!api.advertiseInfo.advertised && (
+                                                {!isAPIProduct && api.advertiseInfo
+                                                    && !api.advertiseInfo.advertised && (
                                                     <LeftMenuItem
                                                         text={intl.formatMessage({
                                                             id: 'Apis.Details.index.monetization',
@@ -879,12 +933,23 @@ class Details extends Component {
                                                 )}
                                             </>
                                         )}
+                                        {isAPIProduct && !api.isWebSocket()
+                                            && !isRestricted(['apim:api_publish'], api) && (
+                                            <LeftMenuItem
+                                                text={intl.formatMessage({
+                                                    id: 'Apis.Details.index.monetization',
+                                                    defaultMessage: 'monetization',
+                                                })}
+                                                to={pathPrefix + 'monetization'}
+                                                Icon={<MonetizationIcon />}
+                                            />
+                                        )}
                                     </div>
                                 </AccordionDetails>
                             </Accordion>
                         </div>
                         <Divider />
-                        {!api.advertiseInfo.advertised && (
+                        {!isAPIProduct && api.advertiseInfo && !api.advertiseInfo.advertised && (
                             <>
                                 <Typography className={classes.headingText}>Deploy</Typography>
                                 <LeftMenuItem
@@ -898,8 +963,22 @@ class Details extends Component {
                                 />
                             </>
                         )}
-                        {!api.isWebSocket() && !isAPIProduct && !api.isGraphql() && !isAsyncAPI
-                            && !api.advertiseInfo.advertised && (
+                        {isAPIProduct && (
+                            <>
+                                <Typography className={classes.headingText}>Deploy</Typography>
+                                <LeftMenuItem
+                                    text={intl.formatMessage({
+                                        id: 'Apis.Details.index.environments',
+                                        defaultMessage: 'Deployments',
+                                    })}
+                                    route='deployments'
+                                    to={pathPrefix + 'deployments'}
+                                    Icon={<PersonPinCircleOutlinedIcon />}
+                                />
+                            </>
+                        )}
+                        {!isAPIProduct && api.advertiseInfo && !api.advertiseInfo.advertised && !api.isWebSocket()
+                            && !api.isGraphql() && !isAsyncAPI && (
                             <div>
                                 <Divider />
                                 <Typography className={classes.headingText}>Test</Typography>

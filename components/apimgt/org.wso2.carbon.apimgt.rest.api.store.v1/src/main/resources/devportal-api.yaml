@@ -3533,9 +3533,6 @@ components:
         isDefaultVersion:
           type: boolean
           example: false
-        isAWSAPI:
-          type: boolean
-          example: false
         type:
           type: string
           description: This describes the transport type of the API
@@ -3610,9 +3607,16 @@ components:
           example: true
           default: false
         additionalProperties:
-          type: object
-          additionalProperties:
-            type: string
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: string
+              display:
+                type: boolean
           description: |
             Custom(user defined) properties of API
           example: {}
@@ -5013,6 +5017,12 @@ components:
         apiOwner:
           type: string
           example: admin
+        vendor:
+          type: string
+          default: WSO2
+          enum:
+            - WSO2
+            - AWS
     APICategory:
       title: API Category
       required:

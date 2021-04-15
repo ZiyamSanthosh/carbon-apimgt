@@ -5,9 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.wso2.carbon.apimgt.rest.api.publisher.v1.dto.APIAdditionalPropertiesDTO;
 import org.wso2.carbon.apimgt.rest.api.publisher.v1.dto.APIBusinessInformationDTO;
 import org.wso2.carbon.apimgt.rest.api.publisher.v1.dto.APICorsConfigurationDTO;
 import org.wso2.carbon.apimgt.rest.api.publisher.v1.dto.APIEndpointSecurityDTO;
@@ -55,7 +54,6 @@ public class APIDTO   {
     private String destinationStatsEnabled = null;
     private Boolean hasThumbnail = null;
     private Boolean isDefaultVersion = null;
-    private Boolean isAWSAPI = null;
     private Boolean isRevision = null;
     private String revisionedApiId = null;
     private Integer revisionId = null;
@@ -186,7 +184,7 @@ return null;
     private SubscriptionAvailabilityEnum subscriptionAvailability = SubscriptionAvailabilityEnum.CURRENT_TENANT;
     private List<String> subscriptionAvailableTenants = new ArrayList<String>();
     @Scope(name = "apim:api_publish", description="", value ="")
-    private Map<String, String> additionalProperties = new HashMap<String, String>();
+    private List<APIAdditionalPropertiesDTO> additionalProperties = new ArrayList<APIAdditionalPropertiesDTO>();
     private APIMonetizationInfoDTO monetization = null;
 
     @XmlType(name="AccessControlEnum")
@@ -530,23 +528,6 @@ return null;
   }
   public void setIsDefaultVersion(Boolean isDefaultVersion) {
     this.isDefaultVersion = isDefaultVersion;
-  }
-
-  /**
-   **/
-  public APIDTO isAWSAPI(Boolean isAWSAPI) {
-    this.isAWSAPI = isAWSAPI;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "false", value = "")
-  @JsonProperty("isAWSAPI")
-  public Boolean isIsAWSAPI() {
-    return isAWSAPI;
-  }
-  public void setIsAWSAPI(Boolean isAWSAPI) {
-    this.isAWSAPI = isAWSAPI;
   }
 
   /**
@@ -922,18 +903,19 @@ return null;
   /**
    * Map of custom properties of API
    **/
-  public APIDTO additionalProperties(Map<String, String> additionalProperties) {
+  public APIDTO additionalProperties(List<APIAdditionalPropertiesDTO> additionalProperties) {
     this.additionalProperties = additionalProperties;
     return this;
   }
 
   
   @ApiModelProperty(value = "Map of custom properties of API")
+      @Valid
   @JsonProperty("additionalProperties")
-  public Map<String, String> getAdditionalProperties() {
+  public List<APIAdditionalPropertiesDTO> getAdditionalProperties() {
     return additionalProperties;
   }
-  public void setAdditionalProperties(Map<String, String> additionalProperties) {
+  public void setAdditionalProperties(List<APIAdditionalPropertiesDTO> additionalProperties) {
     this.additionalProperties = additionalProperties;
   }
 
@@ -1284,7 +1266,6 @@ return null;
         Objects.equals(destinationStatsEnabled, API.destinationStatsEnabled) &&
         Objects.equals(hasThumbnail, API.hasThumbnail) &&
         Objects.equals(isDefaultVersion, API.isDefaultVersion) &&
-        Objects.equals(isAWSAPI, API.isAWSAPI) &&
         Objects.equals(isRevision, API.isRevision) &&
         Objects.equals(revisionedApiId, API.revisionedApiId) &&
         Objects.equals(revisionId, API.revisionId) &&
@@ -1329,7 +1310,7 @@ return null;
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, context, version, provider, lifeCycleStatus, wsdlInfo, wsdlUrl, testKey, responseCachingEnabled, cacheTimeout, destinationStatsEnabled, hasThumbnail, isDefaultVersion, isAWSAPI, isRevision, revisionedApiId, revisionId, enableSchemaValidation, enableStore, type, transport, tags, policies, apiThrottlingPolicy, authorizationHeader, securityScheme, maxTps, visibility, visibleRoles, visibleTenants, endpointSecurity, gatewayEnvironments, mediationPolicies, subscriptionAvailability, subscriptionAvailableTenants, additionalProperties, monetization, accessControl, accessControlRoles, businessInformation, corsConfiguration, websubSubscriptionConfiguration, workflowStatus, createdTime, lastUpdatedTime, endpointConfig, endpointImplementationType, scopes, operations, threatProtectionPolicies, categories, keyManagers, serviceInfo, advertiseInfo);
+    return Objects.hash(id, name, description, context, version, provider, lifeCycleStatus, wsdlInfo, wsdlUrl, testKey, responseCachingEnabled, cacheTimeout, destinationStatsEnabled, hasThumbnail, isDefaultVersion, isRevision, revisionedApiId, revisionId, enableSchemaValidation, enableStore, type, transport, tags, policies, apiThrottlingPolicy, authorizationHeader, securityScheme, maxTps, visibility, visibleRoles, visibleTenants, endpointSecurity, gatewayEnvironments, mediationPolicies, subscriptionAvailability, subscriptionAvailableTenants, additionalProperties, monetization, accessControl, accessControlRoles, businessInformation, corsConfiguration, websubSubscriptionConfiguration, workflowStatus, createdTime, lastUpdatedTime, endpointConfig, endpointImplementationType, scopes, operations, threatProtectionPolicies, categories, keyManagers, serviceInfo, advertiseInfo);
   }
 
   @Override
@@ -1352,7 +1333,6 @@ return null;
     sb.append("    destinationStatsEnabled: ").append(toIndentedString(destinationStatsEnabled)).append("\n");
     sb.append("    hasThumbnail: ").append(toIndentedString(hasThumbnail)).append("\n");
     sb.append("    isDefaultVersion: ").append(toIndentedString(isDefaultVersion)).append("\n");
-    sb.append("    isAWSAPI: ").append(toIndentedString(isAWSAPI)).append("\n");
     sb.append("    isRevision: ").append(toIndentedString(isRevision)).append("\n");
     sb.append("    revisionedApiId: ").append(toIndentedString(revisionedApiId)).append("\n");
     sb.append("    revisionId: ").append(toIndentedString(revisionId)).append("\n");
