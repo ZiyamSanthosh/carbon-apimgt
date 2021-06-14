@@ -41,6 +41,7 @@ public class APIInfoDTO   {
     private List<String> securityScheme = new ArrayList<String>();
     private String createdTime = null;
     private String updatedTime = null;
+    private Boolean advertiseOnlyAPI = null;
 
   /**
    **/
@@ -301,6 +302,23 @@ public class APIInfoDTO   {
     this.updatedTime = updatedTime;
   }
 
+  /**
+   **/
+  public APIInfoDTO advertiseOnlyAPI(Boolean advertiseOnlyAPI) {
+    this.advertiseOnlyAPI = advertiseOnlyAPI;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "false", value = "")
+  @JsonProperty("advertiseOnlyAPI")
+  public Boolean isAdvertiseOnlyAPI() {
+    return advertiseOnlyAPI;
+  }
+  public void setAdvertiseOnlyAPI(Boolean advertiseOnlyAPI) {
+    this.advertiseOnlyAPI = advertiseOnlyAPI;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -325,12 +343,13 @@ public class APIInfoDTO   {
         Objects.equals(hasThumbnail, apIInfo.hasThumbnail) &&
         Objects.equals(securityScheme, apIInfo.securityScheme) &&
         Objects.equals(createdTime, apIInfo.createdTime) &&
-        Objects.equals(updatedTime, apIInfo.updatedTime);
+        Objects.equals(updatedTime, apIInfo.updatedTime) &&
+        Objects.equals(advertiseOnlyAPI, apIInfo.advertiseOnlyAPI);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, context, additionalProperties, additionalPropertiesMap, version, provider, type, lifeCycleStatus, workflowStatus, hasThumbnail, securityScheme, createdTime, updatedTime);
+    return Objects.hash(id, name, description, context, additionalProperties, additionalPropertiesMap, version, provider, type, lifeCycleStatus, workflowStatus, hasThumbnail, securityScheme, createdTime, updatedTime, advertiseOnlyAPI);
   }
 
   @Override
@@ -353,6 +372,7 @@ public class APIInfoDTO   {
     sb.append("    securityScheme: ").append(toIndentedString(securityScheme)).append("\n");
     sb.append("    createdTime: ").append(toIndentedString(createdTime)).append("\n");
     sb.append("    updatedTime: ").append(toIndentedString(updatedTime)).append("\n");
+    sb.append("    advertiseOnlyAPI: ").append(toIndentedString(advertiseOnlyAPI)).append("\n");
     sb.append("}");
     return sb.toString();
   }

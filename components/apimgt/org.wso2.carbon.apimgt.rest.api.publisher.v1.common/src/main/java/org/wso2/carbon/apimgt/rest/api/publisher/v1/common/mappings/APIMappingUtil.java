@@ -694,6 +694,7 @@ public class APIMappingUtil {
             apiInfoDTO.setAdditionalProperties(additionalPropertiesList);
             apiInfoDTO.setAdditionalPropertiesMap(additionalPropertiesMap);
         }
+        apiInfoDTO.setAdvertiseOnlyAPI(api.isAdvertiseOnly());
         return apiInfoDTO;
     }
 

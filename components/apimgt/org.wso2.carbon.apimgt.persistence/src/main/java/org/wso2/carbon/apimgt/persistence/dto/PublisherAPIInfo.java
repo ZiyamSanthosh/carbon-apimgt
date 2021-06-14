@@ -36,6 +36,15 @@ public class PublisherAPIInfo {
     private String thumbnail; // thumbnail is not required for normal ApiGet
     private String createdTime;
     private Date updatedTime;
+    private boolean isAdvertiseOnly;
+
+    public boolean isAdvertiseOnly() {
+        return isAdvertiseOnly;
+    }
+
+    public void setAdvertiseOnly(boolean advertiseOnly) {
+        isAdvertiseOnly = advertiseOnly;
+    }
 
     public String getApiName() {
         return apiName;
